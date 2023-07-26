@@ -1,1 +1,3 @@
-grpcを深く学ぶ
+# grpcをちゃんと学ぶ
+* client: python
+* server: go
