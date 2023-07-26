@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "ecommerce/server/proto/v1"
+	pb "ecommerce/server/product/proto/v1"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"

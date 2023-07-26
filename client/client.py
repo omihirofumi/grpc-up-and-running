@@ -1,7 +1,7 @@
 import grpc
 
-from v1 import product_info_pb2_grpc
-from v1 import product_info_pb2
+from proto.v1 import product_info_pb2_grpc
+from proto.v1 import product_info_pb2
 
 
 def run():

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	pb "ecommerce/server/proto/v1"
+	pb "ecommerce/server/product/proto/v1"
 	"github.com/gofrs/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

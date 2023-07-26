@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from v1 import product_info_pb2 as v1_dot_product__info__pb2
+from proto.v1 import product_info_pb2 as proto_dot_v1_dot_product__info__pb2
 
 
 class ProductInfoStub(object):
@@ -16,13 +16,13 @@ class ProductInfoStub(object):
         """
         self.addProduct = channel.unary_unary(
                 '/ecommerce.v1.ProductInfo/addProduct',
-                request_serializer=v1_dot_product__info__pb2.Product.SerializeToString,
-                response_deserializer=v1_dot_product__info__pb2.ProductID.FromString,
+                request_serializer=proto_dot_v1_dot_product__info__pb2.Product.SerializeToString,
+                response_deserializer=proto_dot_v1_dot_product__info__pb2.ProductID.FromString,
                 )
         self.getProduct = channel.unary_unary(
                 '/ecommerce.v1.ProductInfo/getProduct',
-                request_serializer=v1_dot_product__info__pb2.ProductID.SerializeToString,
-                response_deserializer=v1_dot_product__info__pb2.Product.FromString,
+                request_serializer=proto_dot_v1_dot_product__info__pb2.ProductID.SerializeToString,
+                response_deserializer=proto_dot_v1_dot_product__info__pb2.Product.FromString,
                 )
 
 
@@ -46,13 +46,13 @@ def add_ProductInfoServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'addProduct': grpc.unary_unary_rpc_method_handler(
                     servicer.addProduct,
-                    request_deserializer=v1_dot_product__info__pb2.Product.FromString,
-                    response_serializer=v1_dot_product__info__pb2.ProductID.SerializeToString,
+                    request_deserializer=proto_dot_v1_dot_product__info__pb2.Product.FromString,
+                    response_serializer=proto_dot_v1_dot_product__info__pb2.ProductID.SerializeToString,
             ),
             'getProduct': grpc.unary_unary_rpc_method_handler(
                     servicer.getProduct,
-                    request_deserializer=v1_dot_product__info__pb2.ProductID.FromString,
-                    response_serializer=v1_dot_product__info__pb2.Product.SerializeToString,
+                    request_deserializer=proto_dot_v1_dot_product__info__pb2.ProductID.FromString,
+                    response_serializer=proto_dot_v1_dot_product__info__pb2.Product.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +76,8 @@ class ProductInfo(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ecommerce.v1.ProductInfo/addProduct',
-            v1_dot_product__info__pb2.Product.SerializeToString,
-            v1_dot_product__info__pb2.ProductID.FromString,
+            proto_dot_v1_dot_product__info__pb2.Product.SerializeToString,
+            proto_dot_v1_dot_product__info__pb2.ProductID.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,7 +93,7 @@ class ProductInfo(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ecommerce.v1.ProductInfo/getProduct',
-            v1_dot_product__info__pb2.ProductID.SerializeToString,
-            v1_dot_product__info__pb2.Product.FromString,
+            proto_dot_v1_dot_product__info__pb2.ProductID.SerializeToString,
+            proto_dot_v1_dot_product__info__pb2.Product.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
