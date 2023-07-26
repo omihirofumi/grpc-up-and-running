@@ -36,4 +36,4 @@ start_product: product
 
 .PHONY: start_order
 start_order: order
-	./bin/proruct
+	./bin/order

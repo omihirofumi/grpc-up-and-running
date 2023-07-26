@@ -100,8 +100,13 @@ func (s *server) ProcessOrders(stream pb.OrderManagement_ProcessOrdersServer) er
 		}
 
 		s.mu.RLock()
-		ord := s.orderMap[orderId.Value]
+		ord, exists := s.orderMap[orderId.Value]
 		s.mu.RUnlock()
+
+		if !exists {
+			log.Printf("Does not exists ID: %s", orderId.Value)
+			continue
+		}
 
 		dest := ord.Destination
 		shipment, exists := combinedShipmentMap[dest]
