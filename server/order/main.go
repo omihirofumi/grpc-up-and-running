@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	pb "ecommerce/server/order/proto/v1"
 	"fmt"
 	"google.golang.org/grpc"
@@ -18,6 +19,16 @@ func init() {
 	orderMap["106"] = &pb.Order{Id: "106", Items: []string{"Amazon Echo", "Apple iPhone XS"}, Destination: "Mountain View, CA", Price: 300.00}
 }
 
+func orderUnaryServerInterceptor(ctx context.Context, req interface{},
+	info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	log.Println("==== [Server Interceptor] ", info.FullMethod)
+
+	m, err := handler(ctx, req)
+
+	log.Println("Post Proc Message : %s", m)
+	return m, err
+}
+
 func main() {
 	s := &server{orderMap: orderMap}
 
@@ -25,7 +36,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	gs := grpc.NewServer()
+	gs := grpc.NewServer(
+		grpc.UnaryInterceptor(orderUnaryServerInterceptor))
 	pb.RegisterOrderManagementServer(gs, s)
 
 	log.Fatal(gs.Serve(lis))
