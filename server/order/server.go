@@ -4,6 +4,7 @@ import (
 	"context"
 	pb "ecommerce/server/order/proto/v1"
 	"fmt"
+	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -25,6 +26,23 @@ type server struct {
 }
 
 func (s *server) AddOrder(ctx context.Context, in *pb.Order) (*wrapperspb.StringValue, error) {
+	if in.Id == "-1" {
+		log.Printf("Order ID is invalid! -> Received Order ID %s",
+			in.Id)
+
+		errorStatus := status.New(codes.InvalidArgument,
+			"Invalid information received")
+		ds, err := errorStatus.WithDetails(
+			&epb.BadRequest_FieldViolation{
+				Field:       "ID",
+				Description: fmt.Sprintf("Order ID received not valid %s", in.Id),
+			})
+		if err != nil {
+			return nil, errorStatus.Err()
+		}
+		return nil, ds.Err()
+	}
+
 	log.Printf("Order Adding ID: %v", in.Id)
 	s.mu.Lock()
 	defer s.mu.Unlock()
