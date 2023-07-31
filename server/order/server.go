@@ -5,13 +5,16 @@ import (
 	pb "ecommerce/server/order/proto/v1"
 	"fmt"
 	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
 	"log"
 	"strings"
 	"sync"
+	"time"
 )
 
 const (
@@ -44,9 +47,20 @@ func (s *server) AddOrder(ctx context.Context, in *pb.Order) (*wrapperspb.String
 	}
 
 	log.Printf("Order Adding ID: %v", in.Id)
+
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Printf("%v from client", md.Get("timestamp"))
+
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.orderMap[in.Id] = in
+
+	header := metadata.Pairs("timestamp", time.Now().Format(time.StampNano))
+	grpc.SendHeader(ctx, header)
+
+	trailer := metadata.Pairs("location", in.Destination)
+	grpc.SetTrailer(ctx, trailer)
+
 	return &wrapperspb.StringValue{Value: "Order Added ID: " + in.Id}, status.New(codes.OK, "").Err()
 }
 
