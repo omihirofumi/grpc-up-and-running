@@ -2,6 +2,7 @@ package main
 
 import (
 	pb "ecommerce/server/order/proto/v1"
+	"flag"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
@@ -19,6 +20,10 @@ func init() {
 }
 
 func main() {
+	// get port from args
+	var port uint
+	flag.UintVar(&port, "port", 50052, "Server port to listen on")
+	flag.Parse()
 	s := &server{orderMap: orderMap}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))

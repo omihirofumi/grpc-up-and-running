@@ -18,7 +18,6 @@ import (
 )
 
 const (
-	port           = 50052
 	orderBatchSize = 3
 )
 
