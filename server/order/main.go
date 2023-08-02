@@ -1,15 +1,22 @@
 package main
 
 import (
+	"crypto/tls"
 	pb "ecommerce/server/order/proto/v1"
 	"flag"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 )
 
-var orderMap = make(map[string]*pb.Order)
+var (
+	orderMap = make(map[string]*pb.Order)
+
+	certFile = "server-cert.pem"
+	keyFile  = "server-key.pem"
+)
 
 func init() {
 	orderMap["102"] = &pb.Order{Id: "102", Items: []string{"Google Pixel 3A", "Mac Book Pro"}, Destination: "Mountain View, CA", Price: 1800.00}
@@ -24,15 +31,28 @@ func main() {
 	var port uint
 	flag.UintVar(&port, "port", 50052, "Server port to listen on")
 	flag.Parse()
+
 	s := &server{orderMap: orderMap}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	gs := grpc.NewServer(
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		log.Fatalf("failed to load key pair: %v", err)
+	}
+	config := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		ClientAuth:   tls.NoClientCert,
+	}
+	opts := []grpc.ServerOption{
+		grpc.Creds(credentials.NewTLS(config)),
 		grpc.UnaryInterceptor(orderUnaryServerInterceptor),
-		grpc.StreamInterceptor(orderServerStreamInterceptor))
+		grpc.StreamInterceptor(orderServerStreamInterceptor),
+	}
+
+	gs := grpc.NewServer(opts...)
 	pb.RegisterOrderManagementServer(gs, s)
 
 	log.Fatal(gs.Serve(lis))

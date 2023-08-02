@@ -5,6 +5,7 @@ import (
 	pb "ecommerce/client/order/proto/v1"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
@@ -13,11 +14,19 @@ import (
 )
 
 const (
-	address = "localhost:50052"
+	address   = "localhost:50052"
+	localhost = "localhost"
 )
 
+var certFile = "../server/server-cert.pem"
+
 func main() {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile(certFile, localhost)
+	if err != nil {
+		log.Fatalf("failed to load credentials: %v", err)
+	}
+	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(creds))
+
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
@@ -35,7 +44,10 @@ func main() {
 	var header, trailer metadata.MD
 
 	order1 := pb.Order{Id: "101", Items: []string{"A", "B"}, Destination: "Japan", Price: 100}
-	res, _ := client.AddOrder(ctxA, &order1, grpc.Header(&header), grpc.Trailer(&trailer))
+	res, err := client.AddOrder(ctxA, &order1, grpc.Header(&header), grpc.Trailer(&trailer))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Print("AddOrder Response -> ", res.Value)
 

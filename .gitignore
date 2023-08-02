@@ -3,3 +3,5 @@ client/.idea
 client/venv
 server/bin
 client/product/proto/v1/__pycache__/
+server/server.*
+client-go/load-balancing

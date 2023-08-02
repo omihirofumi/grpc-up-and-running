@@ -37,3 +37,22 @@ start_product: product
 .PHONY: start_order
 start_order: order
 	./bin/order
+
+.PHONY: self_cert
+self_cert:
+	@openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
+				 -keyout ca-key.pem -out ca-cert.pem \
+				 -subj "/C=JP/ST=Aichi/L=Anjo/O=DEV/OU=TUTORIAL/CN=localhost"
+
+.PHONY: server_csr
+server_csr:
+	@openssl req -newkey rsa:2048 -nodes -keyout server-key.pem -out server-req.pem \
+				 -config ../config/san.cnf
+
+.PHONY: sign_csr
+sign_csr:
+	@openssl x509 -req -in server-req.pem -CA ca-cert.pem -CAkey ca-key.pem \
+				  -CAcreateserial -out server-cert.pem -extfile ../config/san.cnf
+
+.PHONY: csr
+csr: self_cert server_csr sign_csr
