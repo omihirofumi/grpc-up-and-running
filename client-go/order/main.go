@@ -18,7 +18,7 @@ const (
 	localhost = "localhost"
 )
 
-var certFile = "../server/server-cert.pem"
+var certFile = "../server/config/server-cert.pem"
 
 func main() {
 	creds, err := credentials.NewClientTLSFromFile(certFile, localhost)

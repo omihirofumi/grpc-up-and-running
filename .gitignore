@@ -7,3 +7,4 @@ server/server.*
 client-go/load-balancing
 config
 server/config
+server/.srl

@@ -14,8 +14,8 @@ import (
 var (
 	orderMap = make(map[string]*pb.Order)
 
-	certFile = "server-cert.pem"
-	keyFile  = "server-key.pem"
+	certFile = "./config/server-cert.pem"
+	keyFile  = "./config/server-key.pem"
 )
 
 func init() {
