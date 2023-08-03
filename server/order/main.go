@@ -7,7 +7,9 @@ import (
 	"flag"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/status"
 	"log"
 	"net"
 	"os"
@@ -19,6 +21,9 @@ var (
 	certFile = "./config/server-cert.pem"
 	keyFile  = "./config/server-key.pem"
 	caFile   = "../config/ca-cert.pem"
+
+	errMissingMetadata = status.Errorf(codes.InvalidArgument, "missing metadata")
+	errInvalidToken    = status.Errorf(codes.Unauthenticated, "invalid credentials")
 )
 
 func init() {
@@ -60,7 +65,10 @@ func main() {
 	}
 	opts := []grpc.ServerOption{
 		grpc.Creds(credentials.NewTLS(config)),
-		grpc.UnaryInterceptor(orderUnaryServerInterceptor),
+		grpc.ChainUnaryInterceptor(
+			ensureValidBasicCredentials,
+			orderUnaryServerInterceptor,
+		),
 		grpc.StreamInterceptor(orderServerStreamInterceptor),
 	}
 

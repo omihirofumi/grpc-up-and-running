@@ -42,12 +42,18 @@ func main() {
 	if ok := certPool.AppendCertsFromPEM(ca); !ok {
 		log.Fatalf("failed to append ca certificate: %v", err)
 	}
+
+	auth := basicAuth{
+		username: "admin",
+		password: "admin",
+	}
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
 			ServerName:   "localhost",
 			Certificates: []tls.Certificate{certificate},
 			RootCAs:      certPool,
 		})),
+		grpc.WithPerRPCCredentials(auth),
 	}
 	conn, err := grpc.Dial(address, opts...)
 
