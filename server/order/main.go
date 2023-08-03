@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	pb "ecommerce/server/order/proto/v1"
 	"flag"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
+	"os"
 )
 
 var (
@@ -16,6 +18,7 @@ var (
 
 	certFile = "./config/server-cert.pem"
 	keyFile  = "./config/server-key.pem"
+	caFile   = "../config/ca-cert.pem"
 )
 
 func init() {
@@ -42,9 +45,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load key pair: %v", err)
 	}
+	certPool := x509.NewCertPool()
+	ca, err := os.ReadFile(caFile)
+	if err != nil {
+		log.Fatalf("could not read ca certificate: %v", err)
+	}
+	if ok := certPool.AppendCertsFromPEM(ca); !ok {
+		log.Fatalf("failed to append ca certificate: %v", err)
+	}
 	config := &tls.Config{
 		Certificates: []tls.Certificate{cert},
-		ClientAuth:   tls.NoClientCert,
+		ClientAuth:   tls.RequestClientCert,
+		ClientCAs:    certPool,
 	}
 	opts := []grpc.ServerOption{
 		grpc.Creds(credentials.NewTLS(config)),

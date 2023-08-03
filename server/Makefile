@@ -43,7 +43,7 @@ start_order: order
 .PHONY: self_cert
 self_cert:
 	@openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
-				 -keyout ./config/ca-key.pem -out ./config/ca-cert.pem \
+				 -keyout ../config/ca-key.pem -out ../config/ca-cert.pem \
 				 -subj "/C=JP/ST=Aichi/L=Anjo/O=DEV/OU=TUTORIAL/CN=self"
 
 .PHONY: server_csr
@@ -54,7 +54,7 @@ server_csr:
 
 .PHONY: sign_csr
 sign_csr:
-	@openssl x509 -req -in ./config/server-req.pem -CA ./config/ca-cert.pem -CAkey ./config/ca-key.pem \
+	@openssl x509 -req -in ./config/server-req.pem -CA ../config/ca-cert.pem -CAkey ../config/ca-key.pem \
 				  -extfile <(printf "subjectAltName=DNS:localhost") -CAcreateserial -out ./config/server-cert.pem
 
 .PHONY: csr

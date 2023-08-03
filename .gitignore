@@ -8,3 +8,4 @@ client-go/load-balancing
 config
 server/config
 server/.srl
+client-go/.srl

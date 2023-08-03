@@ -1,3 +1,5 @@
+SHELL=/bin/bash
+
 .PHONY: proto
 proto:
 	@protoc -I .. \
@@ -17,3 +19,17 @@ order:
 .PHONY: start
 start: order
 	./bin/order
+
+.PHONY: client_csr
+client_csr:
+	@openssl req -newkey rsa:2048 -nodes -keyout ./config/client-key.pem -out ./config/client-req.pem \
+			 -subj "/C=JP/ST=AI/L=NIS/O=DEV, Inc./CN=localhost"
+
+
+.PHONY: sign_csr
+sign_csr:
+	@openssl x509 -req -in ./config/client-req.pem -CA ../config/ca-cert.pem -CAkey ../config/ca-key.pem \
+				  -extfile <(printf "subjectAltName=DNS:localhost") -CAcreateserial -out ./config/client-cert.pem
+
+.PHONY: csr
+csr:  client_csr sign_csr
