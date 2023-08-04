@@ -9,6 +9,15 @@ proto:
  			--go-grpc_opt=paths=source_relative \
  			../proto/v1/order.proto
 
+.PHONY: proto_product
+proto_product:
+	@protoc -I .. \
+ 			--go_out=./product \
+ 			--go-grpc_out=./product \
+ 			--go_opt=paths=source_relative \
+ 			--go-grpc_opt=paths=source_relative \
+ 			../proto/v1/product_info.proto \
+
 .PHONY: server
 server: order
 
