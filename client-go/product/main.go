@@ -14,7 +14,7 @@ func main() {
 	args := os.Args
 	var hostname, port string
 	if len(args) < 3 {
-		hostname = "productinfo"
+		hostname = "localhost"
 		port = "50051"
 	} else {
 		hostname = args[1]
