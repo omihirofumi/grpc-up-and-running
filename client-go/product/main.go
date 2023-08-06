@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	pb "ecommerce/client/product/proto/v1"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"os"
-	pb "product/proto/v1"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	args := os.Args
 	var hostname, port string
 	if len(args) < 3 {
-		hostname = "localhost"
+		hostname = "productinfo"
 		port = "50051"
 	} else {
 		hostname = args[1]
