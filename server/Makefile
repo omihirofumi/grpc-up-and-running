@@ -1,4 +1,4 @@
-SHELL=/bin/bash
+SHELL=/bin/zsh
 
 .PHONY: proto
 proto: proto_product proto_order

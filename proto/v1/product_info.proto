@@ -1,11 +1,23 @@
 syntax = "proto3";
+
+import "google/api/annotations.proto";
+
 package ecommerce.v1;
 
 option go_package = "github.com/omihirofumi/grpc-up-and-running/ecommerce_v1";
 
 service ProductInfo {
-  rpc addProduct(Product) returns (ProductID);
-  rpc getProduct(ProductID) returns (Product);
+  rpc addProduct(Product) returns (ProductID) {
+    option (google.api.http) = {
+      post: "/v1/product"
+      body: "*"
+    };
+  }
+  rpc getProduct(ProductID) returns (Product) {
+    option (google.api.http) = {
+      get: "/v1/product/{value}"
+    };
+  }
 }
 
 message Product {
