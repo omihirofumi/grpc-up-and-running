@@ -5,12 +5,25 @@ proto: proto_product proto_order
 
 .PHONY: proto_product
 proto_product:
-	@protoc -I .. \
+	@protoc -I .. -I ../proto \
  			--go_out=./product \
  			--go-grpc_out=./product \
  			--go_opt=paths=source_relative \
  			--go-grpc_opt=paths=source_relative \
- 			../proto/v1/product_info.proto \
+ 			../proto/v1/product_info.proto
+
+.PHONY: proto_gw
+proto_gw:
+	@protoc -I .. -I ../proto \
+ 			--go_out=./product \
+ 			--go-grpc_out=./product \
+ 			--go_opt=paths=source_relative \
+ 			--go-grpc_opt=paths=source_relative \
+			--grpc-gateway_out=logtostderr=true:./product \
+			--grpc-gateway_opt paths=source_relative \
+ 			../proto/v1/product_info.proto
+
+
 
 .PHONY: proto_order
 proto_order:

@@ -18,6 +18,17 @@ proto_product:
  			--go-grpc_opt=paths=source_relative \
  			../proto/v1/product_info.proto \
 
+.PHONY: proto_gw
+proto_gw:
+	@protoc -I .. -I ../proto \
+ 			--go_out=./gateway \
+ 			--go-grpc_out=./gateway \
+ 			--go_opt=paths=source_relative \
+ 			--go-grpc_opt=paths=source_relative \
+			--grpc-gateway_out=logtostderr=true:./gateway \
+			--grpc-gateway_opt paths=source_relative \
+ 			../proto/v1/product_info.proto
+
 .PHONY: server
 server: order
 
