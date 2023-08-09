@@ -8,6 +8,7 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/zpages"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"net/http"
@@ -36,6 +37,7 @@ func main() {
 	s := grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 
 	pb.RegisterProductInfoServer(s, &server{})
+	reflection.Register(s)
 
 	log.Printf("Starting gRPC listener on port %d", port)
 
